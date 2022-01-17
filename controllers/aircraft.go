@@ -2,42 +2,92 @@ package controllers
 
 import (
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"enttest/ent"
 	"enttest/models"
 	"fmt"
 	"github.com/google/uuid"
 	"net/http"
+	"net/url"
 	"regexp"
+	"strconv"
+	"strings"
 )
 
-type userController struct {
-	userIDPattern *regexp.Regexp
-	ctx           context.Context
-	client        *ent.Client
+type aircraftController struct {
+	aircraftIDPattern           *regexp.Regexp
+	aircraftOrderByPattern      *regexp.Regexp
+	aircraftTypePattern         *regexp.Regexp
+	aircraftRegistrationPattern *regexp.Regexp
+	aircraftExportCSVPattern    *regexp.Regexp
+	ctx                         context.Context
+	client                      *ent.Client
 }
 
-func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/aircrafts" {
+func (uc aircraftController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/aircrafts" && r.URL.RawQuery == "" {
 		switch r.Method {
 		case http.MethodGet:
 			uc.getAll(w, r)
-		//case http.MethodPost:
-		//uc.post(w, r)
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
-	} else {
-		matches := uc.userIDPattern.FindStringSubmatch(r.URL.Path)
-		if len(matches) == 0 {
-			w.WriteHeader(http.StatusNotFound)
-			return
+	} else if matches := uc.aircraftExportCSVPattern.FindStringSubmatch(r.URL.Path); len(matches) > 0 {
+		switch r.Method {
+		case http.MethodGet:
+			w.Header().Set("Content-Type", "text/csv")
+			w.Header().Set("Content-Disposition", "attachment;filename=TheCSVFileName.csv")
+			w.Header().Set("Transfer-Encoding", "chunked")
+			wr := csv.NewWriter(w)
+			aircrafts, _ := models.GetAircrafts(uc.ctx, uc.client)
+
+			wr.Write([]string{
+				"Aircraft Id",
+				"Company Id",
+				"Current Flight Hours",
+				"Current Cycles",
+				"Aircraft Registration",
+				"Base Airport Code",
+				"Manufacturer",
+				"Manufacturer Designator",
+				"Common Designation",
+				"Common Name",
+				"Pilots Required To Fly)",
+				"Default Values",
+				"Maximum Values",
+				"Current Landings)",
+				"Fuel Details",
+				"Oil Details",
+			})
+
+			for _, value := range aircrafts {
+				wr.Write([]string{
+					(*value).AircraftId.String(),
+					(*value).CompanyId.String(),
+					fmt.Sprintf("%f", (*value).CurrentFlightHours),
+					strconv.Itoa((*value).CurrentCycles),
+					(*value).AircraftRegistration,
+					(*value).BaseAirportCode,
+					(*value).Manufacturer,
+					(*value).ManufacturerDesignator,
+					(*value).CommonDesignation,
+					(*value).CommonName,
+					strconv.Itoa((*value).PilotsRequiredToFly),
+					(*value).DefaultValues,
+					(*value).MaximumValues,
+					strconv.Itoa((*value).CurrentLandings),
+					(*value).FuelDetails,
+					(*value).OilDetails,
+				})
+			}
+
+			wr.Flush()
+			//uc.getAllCsv(*wr, r)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
 		}
-		//id, err := strconv.Atoi(matches[1])
-		//if err != nil {
-		//w.WriteHeader(http.StatusNotFound)
-		//return
-		//}
+	} else if matches := uc.aircraftIDPattern.FindStringSubmatch(r.URL.Path); len(matches) > 0 {
 		switch r.Method {
 		case http.MethodGet:
 			uc.get(matches[1], w)
@@ -48,11 +98,90 @@ func (uc userController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
+	} else if matches := uc.aircraftOrderByPattern.FindStringSubmatch(strings.ToLower(r.URL.RawQuery)); r.URL.Path == "/aircrafts" && len(matches) > 0 {
+		switch r.Method {
+		case http.MethodGet:
+			values := r.URL.Query()
+			orderBy := getQueryStringValue(values, "orderby")
+			direction := getQueryStringValue(values, "direction")
+
+			isAscending := (direction == "" || direction == "asc") || !(direction != "" && direction == "desc")
+
+			if orderBy == "flighthours" {
+				if isAscending {
+					uc.getAllSortByFlightHoursAscending(w, r)
+				} else {
+					uc.getAllSortByFlightHoursDescending(w, r)
+				}
+			} else {
+				w.WriteHeader(http.StatusNotImplemented)
+			}
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else if matches := uc.aircraftTypePattern.FindStringSubmatch(strings.ToLower(r.URL.RawQuery)); r.URL.Path == "/aircrafts" && len(matches) > 0 {
+		switch r.Method {
+		case http.MethodGet:
+			values := r.URL.Query()
+			designation := getQueryStringValue(values, "designation")
+
+			uc.getAllByCommonDesignation(w, r, designation)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else if matches := uc.aircraftRegistrationPattern.FindStringSubmatch(strings.ToLower(r.URL.RawQuery)); r.URL.Path == "/aircrafts" && len(matches) > 0 {
+		switch r.Method {
+		case http.MethodGet:
+			values := r.URL.Query()
+			registration := getQueryStringValue(values, "registration")
+
+			uc.getAllByCommonRegistration(w, r, registration)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else {
+		w.WriteHeader(http.StatusNotImplemented)
 	}
 }
 
-func (uc *userController) getAll(w http.ResponseWriter, r *http.Request) {
+func getQueryStringValue(values url.Values, key string) string {
+	var value string
+
+	for k, _ := range values {
+		if strings.ToLower(k) == key {
+			value = strings.ToLower(values.Get(k))
+		}
+	}
+
+	return value
+}
+
+func (uc *aircraftController) getAll(w http.ResponseWriter, r *http.Request) {
 	u, _ := models.GetAircrafts(uc.ctx, uc.client)
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *aircraftController) getAllSortByFlightHoursAscending(w http.ResponseWriter, r *http.Request) {
+	u, _ := models.GetAircraftsByFlightHoursAscending(uc.ctx, uc.client)
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *aircraftController) getAllSortByFlightHoursDescending(w http.ResponseWriter, r *http.Request) {
+	u, _ := models.GetAircraftsByFlightHoursDescending(uc.ctx, uc.client)
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *aircraftController) getAllByCommonDesignation(w http.ResponseWriter, r *http.Request, designation string) {
+	u, _ := models.GetAircraftsByType(uc.ctx, uc.client, designation)
+
+	encodeResponseAsJSON(u, w)
+}
+
+func (uc *aircraftController) getAllByCommonRegistration(w http.ResponseWriter, r *http.Request, registration string) {
+	u, _ := models.GetAircraftsByRegistration(uc.ctx, uc.client, registration)
 
 	encodeResponseAsJSON(u, w)
 }
@@ -67,7 +196,7 @@ func stringToUUID(newUUID string) (*uuid.UUID, error) {
 	return &id, nil
 }
 
-func (uc *userController) get(id string, w http.ResponseWriter) {
+func (uc *aircraftController) get(id string, w http.ResponseWriter) {
 
 	uuid, err := stringToUUID(id)
 
@@ -84,55 +213,7 @@ func (uc *userController) get(id string, w http.ResponseWriter) {
 	encodeResponseAsJSON(u, w)
 }
 
-/*
-func (uc *userController) post(w http.ResponseWriter, r *http.Request) {
-	u, err := uc.parseRequest(r)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Could not parse User object"))
-		return
-	}
-	u, err = models.AddUser(u)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	encodeResponseAsJSON(u, w)
-}
-
-func (uc *userController) put(id int, w http.ResponseWriter, r *http.Request) {
-	u, err := uc.parseRequest(r)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Could not parse User object"))
-		return
-	}
-	if id != u.ID {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("ID of submitted user must match ID in URL"))
-		return
-	}
-	u, err = models.UpdateUser(u)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	encodeResponseAsJSON(u, w)
-}
-
-func (uc *userController) delete(id int, w http.ResponseWriter) {
-	err := models.RemoveUserById(id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-}*/
-
-func (uc *userController) parseRequest(r *http.Request) (models.Aircraft, error) {
+func (uc *aircraftController) parseRequest(r *http.Request) (models.Aircraft, error) {
 	dec := json.NewDecoder(r.Body)
 	var u models.Aircraft
 	err := dec.Decode(&u)
@@ -142,10 +223,14 @@ func (uc *userController) parseRequest(r *http.Request) (models.Aircraft, error)
 	return u, nil
 }
 
-func newUserController(dbContext context.Context, dbClient *ent.Client) *userController {
-	return &userController{
-		userIDPattern: regexp.MustCompile(`^/aircrafts/(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/?`),
-		ctx:           dbContext,
-		client:        dbClient,
+func newAircraftController(dbContext context.Context, dbClient *ent.Client) *aircraftController {
+	return &aircraftController{
+		aircraftIDPattern:           regexp.MustCompile(`^/aircrafts/(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/?`),
+		aircraftOrderByPattern:      regexp.MustCompile(`^orderby=\w+(&direction=(asc|desc))?/?`),
+		aircraftTypePattern:         regexp.MustCompile(`^designation=[\w\d-]*/?`),
+		aircraftRegistrationPattern: regexp.MustCompile(`^registration=[\w\d-]*/?`),
+		aircraftExportCSVPattern:    regexp.MustCompile(`^/aircrafts/exportcsv/?`),
+		ctx:                         dbContext,
+		client:                      dbClient,
 	}
 }

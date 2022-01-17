@@ -196,7 +196,7 @@ func (m *AircraftMutation) CurrentFlightHours() (r float32, exists bool) {
 // OldCurrentFlightHours returns the old "current_flight_hours" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldCurrentFlightHours(ctx context.Context) (v *float32, err error) {
+func (m *AircraftMutation) OldCurrentFlightHours(ctx context.Context) (v float32, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCurrentFlightHours is only allowed on UpdateOne operations")
 	}
@@ -266,7 +266,7 @@ func (m *AircraftMutation) CurrentCycles() (r int, exists bool) {
 // OldCurrentCycles returns the old "current_cycles" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldCurrentCycles(ctx context.Context) (v *int, err error) {
+func (m *AircraftMutation) OldCurrentCycles(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCurrentCycles is only allowed on UpdateOne operations")
 	}
@@ -433,7 +433,7 @@ func (m *AircraftMutation) Manufacturer() (r string, exists bool) {
 // OldManufacturer returns the old "manufacturer" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldManufacturer(ctx context.Context) (v *string, err error) {
+func (m *AircraftMutation) OldManufacturer(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldManufacturer is only allowed on UpdateOne operations")
 	}
@@ -531,7 +531,7 @@ func (m *AircraftMutation) CommonDesignation() (r string, exists bool) {
 // OldCommonDesignation returns the old "common_designation" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldCommonDesignation(ctx context.Context) (v *string, err error) {
+func (m *AircraftMutation) OldCommonDesignation(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCommonDesignation is only allowed on UpdateOne operations")
 	}
@@ -630,7 +630,7 @@ func (m *AircraftMutation) PilotsRequiredToFly() (r int, exists bool) {
 // OldPilotsRequiredToFly returns the old "pilots_required_to_fly" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldPilotsRequiredToFly(ctx context.Context) (v *int, err error) {
+func (m *AircraftMutation) OldPilotsRequiredToFly(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldPilotsRequiredToFly is only allowed on UpdateOne operations")
 	}
@@ -798,7 +798,7 @@ func (m *AircraftMutation) CurrentLandings() (r int, exists bool) {
 // OldCurrentLandings returns the old "current_landings" field's value of the Aircraft entity.
 // If the Aircraft object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AircraftMutation) OldCurrentLandings(ctx context.Context) (v *int, err error) {
+func (m *AircraftMutation) OldCurrentLandings(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, fmt.Errorf("OldCurrentLandings is only allowed on UpdateOne operations")
 	}

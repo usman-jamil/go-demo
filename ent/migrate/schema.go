@@ -32,6 +32,23 @@ var (
 		Name:       "aircrafts",
 		Columns:    AircraftsColumns,
 		PrimaryKey: []*schema.Column{AircraftsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "aircraft_current_flight_hours",
+				Unique:  false,
+				Columns: []*schema.Column{AircraftsColumns[2]},
+			},
+			{
+				Name:    "aircraft_aircraft_registration",
+				Unique:  false,
+				Columns: []*schema.Column{AircraftsColumns[4]},
+			},
+			{
+				Name:    "aircraft_common_designation",
+				Unique:  false,
+				Columns: []*schema.Column{AircraftsColumns[8]},
+			},
+		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{

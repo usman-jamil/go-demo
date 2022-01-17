@@ -360,7 +360,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldCurrentFlightHours,
 		})
-		_node.CurrentFlightHours = &value
+		_node.CurrentFlightHours = value
 	}
 	if value, ok := ac.mutation.CurrentCycles(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -368,7 +368,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldCurrentCycles,
 		})
-		_node.CurrentCycles = &value
+		_node.CurrentCycles = value
 	}
 	if value, ok := ac.mutation.AircraftRegistration(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -392,7 +392,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldManufacturer,
 		})
-		_node.Manufacturer = &value
+		_node.Manufacturer = value
 	}
 	if value, ok := ac.mutation.ManufacturerDesignator(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -408,7 +408,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldCommonDesignation,
 		})
-		_node.CommonDesignation = &value
+		_node.CommonDesignation = value
 	}
 	if value, ok := ac.mutation.CommonName(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -424,7 +424,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldPilotsRequiredToFly,
 		})
-		_node.PilotsRequiredToFly = &value
+		_node.PilotsRequiredToFly = value
 	}
 	if value, ok := ac.mutation.DefaultValues(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
@@ -448,7 +448,7 @@ func (ac *AircraftCreate) createSpec() (*Aircraft, *sqlgraph.CreateSpec) {
 			Value:  value,
 			Column: aircraft.FieldCurrentLandings,
 		})
-		_node.CurrentLandings = &value
+		_node.CurrentLandings = value
 	}
 	if value, ok := ac.mutation.FuelDetails(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

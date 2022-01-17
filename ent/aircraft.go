@@ -19,29 +19,29 @@ type Aircraft struct {
 	// CompanyID holds the value of the "company_id" field.
 	CompanyID uuid.UUID `json:"company_id,omitempty"`
 	// CurrentFlightHours holds the value of the "current_flight_hours" field.
-	CurrentFlightHours *float32 `json:"current_flight_hours,omitempty"`
+	CurrentFlightHours float32 `json:"current_flight_hours,omitempty"`
 	// CurrentCycles holds the value of the "current_cycles" field.
-	CurrentCycles *int `json:"current_cycles,omitempty"`
+	CurrentCycles int `json:"current_cycles,omitempty"`
 	// AircraftRegistration holds the value of the "aircraft_registration" field.
 	AircraftRegistration string `json:"aircraft_registration,omitempty"`
 	// BaseAirportCode holds the value of the "base_airport_code" field.
 	BaseAirportCode string `json:"base_airport_code,omitempty"`
 	// Manufacturer holds the value of the "manufacturer" field.
-	Manufacturer *string `json:"manufacturer,omitempty"`
+	Manufacturer string `json:"manufacturer,omitempty"`
 	// ManufacturerDesignator holds the value of the "manufacturer_designator" field.
 	ManufacturerDesignator string `json:"manufacturer_designator,omitempty"`
 	// CommonDesignation holds the value of the "common_designation" field.
-	CommonDesignation *string `json:"common_designation,omitempty"`
+	CommonDesignation string `json:"common_designation,omitempty"`
 	// CommonName holds the value of the "common_name" field.
 	CommonName string `json:"common_name,omitempty"`
 	// PilotsRequiredToFly holds the value of the "pilots_required_to_fly" field.
-	PilotsRequiredToFly *int `json:"pilots_required_to_fly,omitempty"`
+	PilotsRequiredToFly int `json:"pilots_required_to_fly,omitempty"`
 	// DefaultValues holds the value of the "default_values" field.
 	DefaultValues string `json:"default_values,omitempty"`
 	// MaximumValues holds the value of the "maximum_values" field.
 	MaximumValues string `json:"maximum_values,omitempty"`
 	// CurrentLandings holds the value of the "current_landings" field.
-	CurrentLandings *int `json:"current_landings,omitempty"`
+	CurrentLandings int `json:"current_landings,omitempty"`
 	// FuelDetails holds the value of the "fuel_details" field.
 	FuelDetails string `json:"fuel_details,omitempty"`
 	// OilDetails holds the value of the "oil_details" field.
@@ -92,15 +92,13 @@ func (a *Aircraft) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullFloat64); !ok {
 				return fmt.Errorf("unexpected type %T for field current_flight_hours", values[i])
 			} else if value.Valid {
-				a.CurrentFlightHours = new(float32)
-				*a.CurrentFlightHours = float32(value.Float64)
+				a.CurrentFlightHours = float32(value.Float64)
 			}
 		case aircraft.FieldCurrentCycles:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field current_cycles", values[i])
 			} else if value.Valid {
-				a.CurrentCycles = new(int)
-				*a.CurrentCycles = int(value.Int64)
+				a.CurrentCycles = int(value.Int64)
 			}
 		case aircraft.FieldAircraftRegistration:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -118,8 +116,7 @@ func (a *Aircraft) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field manufacturer", values[i])
 			} else if value.Valid {
-				a.Manufacturer = new(string)
-				*a.Manufacturer = value.String
+				a.Manufacturer = value.String
 			}
 		case aircraft.FieldManufacturerDesignator:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -131,8 +128,7 @@ func (a *Aircraft) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field common_designation", values[i])
 			} else if value.Valid {
-				a.CommonDesignation = new(string)
-				*a.CommonDesignation = value.String
+				a.CommonDesignation = value.String
 			}
 		case aircraft.FieldCommonName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -144,8 +140,7 @@ func (a *Aircraft) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field pilots_required_to_fly", values[i])
 			} else if value.Valid {
-				a.PilotsRequiredToFly = new(int)
-				*a.PilotsRequiredToFly = int(value.Int64)
+				a.PilotsRequiredToFly = int(value.Int64)
 			}
 		case aircraft.FieldDefaultValues:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -163,8 +158,7 @@ func (a *Aircraft) assignValues(columns []string, values []interface{}) error {
 			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field current_landings", values[i])
 			} else if value.Valid {
-				a.CurrentLandings = new(int)
-				*a.CurrentLandings = int(value.Int64)
+				a.CurrentLandings = int(value.Int64)
 			}
 		case aircraft.FieldFuelDetails:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -208,42 +202,30 @@ func (a *Aircraft) String() string {
 	builder.WriteString(fmt.Sprintf("id=%v", a.ID))
 	builder.WriteString(", company_id=")
 	builder.WriteString(fmt.Sprintf("%v", a.CompanyID))
-	if v := a.CurrentFlightHours; v != nil {
-		builder.WriteString(", current_flight_hours=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
-	if v := a.CurrentCycles; v != nil {
-		builder.WriteString(", current_cycles=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString(", current_flight_hours=")
+	builder.WriteString(fmt.Sprintf("%v", a.CurrentFlightHours))
+	builder.WriteString(", current_cycles=")
+	builder.WriteString(fmt.Sprintf("%v", a.CurrentCycles))
 	builder.WriteString(", aircraft_registration=")
 	builder.WriteString(a.AircraftRegistration)
 	builder.WriteString(", base_airport_code=")
 	builder.WriteString(a.BaseAirportCode)
-	if v := a.Manufacturer; v != nil {
-		builder.WriteString(", manufacturer=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", manufacturer=")
+	builder.WriteString(a.Manufacturer)
 	builder.WriteString(", manufacturer_designator=")
 	builder.WriteString(a.ManufacturerDesignator)
-	if v := a.CommonDesignation; v != nil {
-		builder.WriteString(", common_designation=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString(", common_designation=")
+	builder.WriteString(a.CommonDesignation)
 	builder.WriteString(", common_name=")
 	builder.WriteString(a.CommonName)
-	if v := a.PilotsRequiredToFly; v != nil {
-		builder.WriteString(", pilots_required_to_fly=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString(", pilots_required_to_fly=")
+	builder.WriteString(fmt.Sprintf("%v", a.PilotsRequiredToFly))
 	builder.WriteString(", default_values=")
 	builder.WriteString(a.DefaultValues)
 	builder.WriteString(", maximum_values=")
 	builder.WriteString(a.MaximumValues)
-	if v := a.CurrentLandings; v != nil {
-		builder.WriteString(", current_landings=")
-		builder.WriteString(fmt.Sprintf("%v", *v))
-	}
+	builder.WriteString(", current_landings=")
+	builder.WriteString(fmt.Sprintf("%v", a.CurrentLandings))
 	builder.WriteString(", fuel_details=")
 	builder.WriteString(a.FuelDetails)
 	builder.WriteString(", oil_details=")

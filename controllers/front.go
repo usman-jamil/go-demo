@@ -10,7 +10,7 @@ import (
 
 func RegisterControllers(ctx context.Context,
 	client *ent.Client) {
-	uc := newUserController(ctx, client)
+	uc := newAircraftController(ctx, client)
 
 	http.Handle("/aircrafts", *uc)
 	http.Handle("/aircrafts/", *uc)
