@@ -34,7 +34,6 @@ func GetAircrafts(ctx context.Context, client *ent.Client) ([]*Aircraft, error) 
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -70,7 +69,6 @@ func GetAircraftsPaged(ctx context.Context, client *ent.Client, limit int, offse
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -106,7 +104,6 @@ func GetAircraftsByFlightHoursAscending(ctx context.Context, client *ent.Client)
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -142,7 +139,6 @@ func GetAircraftsByFlightHoursDescending(ctx context.Context, client *ent.Client
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -177,7 +173,6 @@ func GetAircraftsByType(ctx context.Context, client *ent.Client, designation str
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -212,7 +207,6 @@ func GetAircraftsByRegistration(ctx context.Context, client *ent.Client, registr
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	aircraftArray := make([]*Aircraft, len(a))
 	for i, aircraftInfo := range a {
@@ -239,24 +233,7 @@ func GetAircraftsByRegistration(ctx context.Context, client *ent.Client, registr
 	return aircraftArray, nil
 }
 
-/*func AddUser(u User) (User, error) {
-	if u.ID != 0 {
-		return User{}, errors.New("New User must not include id or it must be set to zero")
-	}
-	u.ID = nextID
-	nextID++
-	users = append(users, &u)
-	return u, nil
-}*/
-
 func GetAircraftByID(ctx context.Context, client *ent.Client, uuid uuid.UUID) (*Aircraft, error) {
-	/*for _, u := range users {
-		if u.ID == id {
-			return *u, nil
-		}
-	}
-
-	return Aircraft{}, fmt.Errorf("User with ID '%v' not found", id)*/
 	a, err := client.Aircraft.
 		Query().
 		Where(aircraft.IDEQ(uuid)).
@@ -264,7 +241,6 @@ func GetAircraftByID(ctx context.Context, client *ent.Client, uuid uuid.UUID) (*
 	if err != nil {
 		return nil, fmt.Errorf("failed querying user: %w", err)
 	}
-	// log.Println("user returned: ", a)
 
 	return &Aircraft{
 		AircraftId:             a.ID,
