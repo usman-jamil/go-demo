@@ -16,6 +16,7 @@ import (
 )
 
 type aircraftController struct {
+	aircraftPagedPattern        *regexp.Regexp
 	aircraftIDPattern           *regexp.Regexp
 	aircraftOrderByPattern      *regexp.Regexp
 	aircraftTypePattern         *regexp.Regexp
@@ -91,10 +92,32 @@ func (uc aircraftController) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			uc.get(matches[1], w)
-			//case http.MethodPut:
-			//uc.put(id, w, r)
-			//case http.MethodDelete:
-			//uc.delete(id, w)
+		default:
+			w.WriteHeader(http.StatusNotImplemented)
+		}
+	} else if matches := uc.aircraftPagedPattern.FindStringSubmatch(strings.ToLower(r.URL.RawQuery)); r.URL.Path == "/aircrafts" && len(matches) > 0 {
+		switch r.Method {
+		case http.MethodGet:
+			values := r.URL.Query()
+			limit := getQueryStringValue(values, "limit")
+			offset := getQueryStringValue(values, "offset")
+			iLimit, err := strconv.Atoi(limit)
+
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("limit should be a valid integer"))
+				return
+			}
+
+			iOffset, err := strconv.Atoi(offset)
+
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				w.Write([]byte("offset should be a valid integer"))
+				return
+			}
+
+			uc.getAllPaged(w, r, iLimit, iOffset)
 		default:
 			w.WriteHeader(http.StatusNotImplemented)
 		}
@@ -162,6 +185,12 @@ func (uc *aircraftController) getAll(w http.ResponseWriter, r *http.Request) {
 	encodeResponseAsJSON(u, w)
 }
 
+func (uc *aircraftController) getAllPaged(w http.ResponseWriter, r *http.Request, limit int, offset int) {
+	u, _ := models.GetAircraftsPaged(uc.ctx, uc.client, limit, offset)
+
+	encodeResponseAsJSON(u, w)
+}
+
 func (uc *aircraftController) getAllSortByFlightHoursAscending(w http.ResponseWriter, r *http.Request) {
 	u, _ := models.GetAircraftsByFlightHoursAscending(uc.ctx, uc.client)
 
@@ -225,6 +254,7 @@ func (uc *aircraftController) parseRequest(r *http.Request) (models.Aircraft, er
 
 func newAircraftController(dbContext context.Context, dbClient *ent.Client) *aircraftController {
 	return &aircraftController{
+		aircraftPagedPattern:        regexp.MustCompile(`^limit=\d+&offset=\d+/?`),
 		aircraftIDPattern:           regexp.MustCompile(`^/aircrafts/(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/?`),
 		aircraftOrderByPattern:      regexp.MustCompile(`^orderby=\w+(&direction=(asc|desc))?/?`),
 		aircraftTypePattern:         regexp.MustCompile(`^designation=[\w\d-]*/?`),

@@ -61,6 +61,42 @@ func GetAircrafts(ctx context.Context, client *ent.Client) ([]*Aircraft, error) 
 	return aircraftArray, nil
 }
 
+func GetAircraftsPaged(ctx context.Context, client *ent.Client, limit int, offset int) ([]*Aircraft, error) {
+	a, err := client.Aircraft.
+		Query().
+		Offset(offset).
+		Limit(limit).
+		All(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed querying user: %w", err)
+	}
+	// log.Println("user returned: ", a)
+
+	aircraftArray := make([]*Aircraft, len(a))
+	for i, aircraftInfo := range a {
+		aircraftArray[i] = &Aircraft{
+			AircraftId:             aircraftInfo.ID,
+			CompanyId:              aircraftInfo.CompanyID,
+			CurrentFlightHours:     aircraftInfo.CurrentFlightHours,
+			CurrentCycles:          aircraftInfo.CurrentCycles,
+			AircraftRegistration:   aircraftInfo.AircraftRegistration,
+			BaseAirportCode:        aircraftInfo.BaseAirportCode,
+			Manufacturer:           aircraftInfo.Manufacturer,
+			ManufacturerDesignator: aircraftInfo.ManufacturerDesignator,
+			CommonDesignation:      aircraftInfo.CommonDesignation,
+			CommonName:             aircraftInfo.CommonName,
+			PilotsRequiredToFly:    aircraftInfo.PilotsRequiredToFly,
+			DefaultValues:          aircraftInfo.DefaultValues,
+			MaximumValues:          aircraftInfo.MaximumValues,
+			CurrentLandings:        aircraftInfo.CurrentLandings,
+			OilDetails:             aircraftInfo.OilDetails,
+			FuelDetails:            aircraftInfo.FuelDetails,
+		}
+	}
+
+	return aircraftArray, nil
+}
+
 func GetAircraftsByFlightHoursAscending(ctx context.Context, client *ent.Client) ([]*Aircraft, error) {
 	a, err := client.Aircraft.
 		Query().
