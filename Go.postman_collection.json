@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "6553d418-72a2-4eaf-90d3-0cd84634166d",
+		"name": "Go",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "All Aircrafts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Aircrafts Paged",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts?limit=3&offset=0",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					],
+					"query": [
+						{
+							"key": "limit",
+							"value": "3"
+						},
+						{
+							"key": "offset",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircrafts Asc Flight Hours",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts?orderby=FlightHours&direction=asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					],
+					"query": [
+						{
+							"key": "orderby",
+							"value": "FlightHours"
+						},
+						{
+							"key": "direction",
+							"value": "asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircrafts Desc Flight Hours",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts?orderby=FlightHours&direction=desc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					],
+					"query": [
+						{
+							"key": "orderby",
+							"value": "FlightHours"
+						},
+						{
+							"key": "direction",
+							"value": "desc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircrafts Filter by Type",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts?designation=208B",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					],
+					"query": [
+						{
+							"key": "designation",
+							"value": "208B"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircrafts Export CSV",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts/exportcsv",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts",
+						"exportcsv"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircrafts Filter by Registration",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts?registration=C-GPNB",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts"
+					],
+					"query": [
+						{
+							"key": "registration",
+							"value": "C-GPNB"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Aircraft by Aircraft Id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/aircrafts/336f432e-4307-44da-a20b-6384637c92fc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"aircrafts",
+						"336f432e-4307-44da-a20b-6384637c92fc"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
