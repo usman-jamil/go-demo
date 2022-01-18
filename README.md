@@ -2,8 +2,6 @@
 
 ## Introduction
 
-`This program was written to showcase experience with core GoLang. Use of 3rd party packages and frameworks was avoided as much as possible`
-
 This GO program exposes an API that provides the following endpoints:
 1. All Aircrafts
 2. All Aircrafts Paged
