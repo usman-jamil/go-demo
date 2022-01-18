@@ -42,6 +42,23 @@ In the project root directory install the following dependencies:
 2. `go get -d entgo.io/ent/cmd/ent`
 3. `go get github.com/google/uuid`
 
+## Generate Dummy Data
+
+The following Postgres SQL script generates 100,000 dummy records in the aircraft table
+
+```WITH salary_list AS (
+    SELECT '{1000, 2000, 5000}'::INT[] salary
+)
+insert into aircraftsbulk (aircraft_id, company_id, current_flight_hours, current_cycles, aircraft_registration,
+                           base_airport_code, manufacturer, manufacturer_designator, common_designation, common_name,
+                           pilots_required_to_fly, default_values, maximum_values, current_landings, fuel_details,
+                           oil_details)
+SELECT gen_random_uuid(), gen_random_uuid(), CAST(n as real) as current_flight_hours, n as current_cycles, 'aircraft_registration_' || n as aircraft_registration, 'base_airport_code_' || n as base_airport_code
+       , 'manufacturer_' || n as manufacturer, 'manufacturer_designator_' || n as manufacturer_designator, 'common_designation_' || n as common_designation, 'common_name_' || n as common_name
+       , n as pilots_required_to_fly, 'default_values_' || n as default_values, 'maximum_values_' || n as maximum_values, n
+       , 'fuel_details_' || n as fuel_details, 'oil_details_' || n as oil_details
+FROM salary_list, generate_series(1, 100000) as n```
+
 ## Used Packages
 Following are the only used packages that are not part of the GO standard library
 
