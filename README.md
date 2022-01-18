@@ -1,4 +1,4 @@
-# Allied/AirTrail Go API Demo
+# Aircraft Go API Demo
 
 ## Introduction
 
