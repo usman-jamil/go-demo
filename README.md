@@ -47,7 +47,7 @@ In the project root directory install the following dependencies:
 The following Postgres SQL script generates 100,000 dummy records in the aircraft table
 
 ```
-insert into aircraftsbulk (aircraft_id, company_id, current_flight_hours, current_cycles, aircraft_registration,
+insert into aircrafts (aircraft_id, company_id, current_flight_hours, current_cycles, aircraft_registration,
                            base_airport_code, manufacturer, manufacturer_designator, common_designation, common_name,
                            pilots_required_to_fly, default_values, maximum_values, current_landings, fuel_details,
                            oil_details)

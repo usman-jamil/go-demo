@@ -24,7 +24,7 @@ func main() {
 		postgresUser,
 		postgresDBName,
 		postgresPassword,
-		postgresSSLMode := LoadEnvironmentVariables()
+		postgresSSLMode := LoadEnvironmentVariables("bulk.env")
 
 	connectionString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		postgresHost,
@@ -59,8 +59,8 @@ func main() {
 	}
 }
 
-func LoadEnvironmentVariables() (bool, bool, bool, string, string, string, string, string, string, string) {
-	godotenv.Load()
+func LoadEnvironmentVariables(envFile string) (bool, bool, bool, string, string, string, string, string, string, string) {
+	godotenv.Load(envFile)
 
 	seedData, err := strconv.ParseBool(goDotEnvVariable("SEED_DATA"))
 	if err != nil {
